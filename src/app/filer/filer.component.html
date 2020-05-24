@@ -1,18 +1,10 @@
 <div class="window">
-    <!-- .toolbar-header sits at the top of your app -->
-    <header class="toolbar toolbar-header">
-        <h1 class="title">Electron Filer</h1>
-    </header>
+    <filer-header></filer-header>
 
-    <!-- Your app's content goes inside .window-content -->
     <div class="window-content">
-        <div class="padded-more">
-            <h1>Welcome to Photon</h1>
-            <p>
-                Thanks for downloading Photon. This is an example HTML page that's linked up to compiled Photon CSS, has
-                the proper meta tags
-                and the HTML structure.
-            </p>
+        <div class="pane-group">
+            <div class="pane-sm sidebar" filer-sidebar></div>
+            <div class="pane" filer-content></div>
         </div>
     </div>
 </div>
