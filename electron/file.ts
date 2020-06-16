@@ -3,35 +3,43 @@ import * as fs from "fs-extra";
 
 type File = {
     path: string;
+    name: string;
+    mode: number;
+    uid: number;
+    gid: number;
     size: number;
     mtime: Date;
+    birthtime: Date;
     isFile: boolean;
+    isSymbolicLink: boolean;
 };
 
-export function getFiles(dirPath: string, includeDotFile: boolean, callback: (files: File[]) => void) {
+export function getFiles(dirPath: string, includeDotFile: boolean, callback: (fileList: File[]) => void) {
     console.log(`call getFiles(${dirPath})`);
 
-    fs.stat(dirPath, (err, _) => {
+    fs.readdir(dirPath, (err, files) => {
         if (err) throw err;
 
-        fs.readdir(dirPath, (err, files) => {
-            if (err) throw err;
-
-            const fileList: File[] = [];
-            files.forEach((file) => {
-                if (includeDotFile || !file.startsWith('.')) {
-                    const filePath = path.join(dirPath, file);
-                    const stat = fs.statSync(filePath);
-                    fileList.push({
-                        path: filePath,
-                        size: stat.size,
-                        mtime: stat.mtime,
-                        isFile: stat.isFile()
-                    });
-                }
-            });
-
-            callback(fileList);
+        const fileStats: File[] = [];
+        files.forEach((file) => {
+            if (includeDotFile || !file.startsWith('.')) {
+                const filePath = path.join(dirPath, file);
+                const stats = fs.statSync(filePath);
+                fileStats.push({
+                    path: filePath,
+                    name: file,
+                    mode: stats.mode,
+                    uid: stats.uid,
+                    gid: stats.gid,
+                    size: stats.size,
+                    mtime: stats.mtime,
+                    birthtime: stats.birthtime,
+                    isFile: stats.isFile(),
+                    isSymbolicLink: stats.isSymbolicLink()
+                });
+            }
         });
+
+        callback(fileStats);
     });
 }
