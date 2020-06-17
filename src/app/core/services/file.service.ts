@@ -24,7 +24,7 @@ export class FileService {
     });
   }
 
-  getFiles(dirPath: string) {
+  requestFiles(dirPath: string) {
     this._electronService.ipcRenderer.send("getFiles", dirPath);
   }
 }
