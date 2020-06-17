@@ -43,3 +43,8 @@ export function getFiles(dirPath: string, includeDotFile: boolean, callback: (fi
         callback(fileStats);
     });
 }
+
+export function getHomeFiles(includeDotFile: boolean, callback: (fileList: File[]) => void) {
+    const homeDir = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"];
+    getFiles(homeDir, includeDotFile, callback);
+}

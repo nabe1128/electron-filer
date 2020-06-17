@@ -15,7 +15,7 @@ export class ContentComponent implements OnInit {
   ngOnInit(): void {
     this._setFilesObserver();
 
-    this._fileService.requestFiles('/');
+    this._fileService.requestHomeFiles();
   }
 
   private _setFilesObserver() {
