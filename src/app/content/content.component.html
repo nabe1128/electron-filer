@@ -2,31 +2,23 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Kind</th>
-            <th>File Size</th>
+            <th>Size</th>
+            <th>Last Update</th>
+            <th>Create</th>
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>photon.css</td>
-            <td>CSS</td>
-            <td>28K</td>
-        </tr>
-        <tr>
-            <td>photon.css</td>
-            <td>CSS</td>
-            <td>28K</td>
-        </tr>
-        <tr>
-            <td>photon.css</td>
-            <td>CSS</td>
-            <td>28K</td>
-        </tr>
-        ...
-        <tr>
-            <td>photon.css</td>
-            <td>CSS</td>
-            <td>28K</td>
+        <tr *ngFor="let file of currentDirFiles">
+            <td>{{file.name}}</td>
+            <td>{{formatSize(file.size)}}</td>
+            <td *ngIf="!isToday(file.mtime); else UpdateTime">{{file.mtime | date:"yyyy/MM/dd"}}</td>
+            <ng-template #UpdateTime>
+                <td>{{file.mtime | date:"HH:ss"}}</td>
+            </ng-template>
+            <td *ngIf="!isToday(file.birthtime); else BirthTime">{{file.birthtime | date:"yyyy/MM/dd"}}</td>
+            <ng-template #BirthTime>
+                <td>{{file.mtime | date:"HH:ss"}}</td>
+            </ng-template>
         </tr>
     </tbody>
 </table>
