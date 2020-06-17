@@ -1,7 +1,6 @@
-import { app, BrowserWindow, screen, ipcMain } from 'electron';
+import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { getFiles, getHomeFiles } from './file';
 
 let win: BrowserWindow = null;
 const args = process.argv.slice(1),
@@ -82,24 +81,4 @@ try {
 } catch (e) {
   // Catch Error
   // throw e;
-}
-
-try {
-  ipcMain.on("getFiles", (event, dirPath) => {
-    getFiles(dirPath, false, (fileList) => {
-      event.sender.send('files', fileList);
-    });
-  });
-} catch (e) {
-
-}
-
-try {
-  ipcMain.on("getHomeFiles", (event) => {
-    getHomeFiles(false, (fileList) => {
-      event.sender.send('files', fileList);
-    });
-  });
-} catch (e) {
-
 }

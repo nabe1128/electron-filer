@@ -15,11 +15,11 @@ export class ContentComponent implements OnInit {
   ngOnInit(): void {
     this._setFilesObserver();
 
-    this._fileService.requestHomeFiles();
+    this._fileService.getHomeFiles(false);
   }
 
   private _setFilesObserver() {
-    this._fileService.file$.subscribe((fileList) => {
+    this._fileService.files$.subscribe((fileList) => {
       console.log(fileList);
     });
   }
