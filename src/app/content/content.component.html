@@ -9,7 +9,9 @@
     </thead>
     <tbody>
         <tr *ngFor="let file of currentDirFiles">
-            <td>{{file.name}}</td>
+            <td>
+                <span class="icon" [class]="iconClass(file)">{{file.name}}</span>
+            </td>
             <td>{{formatSize(file.size)}}</td>
             <td *ngIf="!isToday(file.mtime); else UpdateTime">{{file.mtime | date:"yyyy/MM/dd"}}</td>
             <ng-template #UpdateTime>

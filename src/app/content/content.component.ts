@@ -33,6 +33,14 @@ export class ContentComponent implements OnInit {
     });
   }
 
+  iconClass(file: File): string {
+    if (!file.isFile) {
+      return 'icon-folder';
+    } else {
+      return 'icon-newspaper';
+    }
+  }
+
   formatSize(size: number): string {
     // GB
     if (size > 1000000000) {
