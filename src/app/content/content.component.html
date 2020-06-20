@@ -1,0 +1,26 @@
+<table class="table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Last Update</th>
+            <th>Create</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let file of currentDirFiles">
+            <td>
+                <span class="icon" [class]="iconClass(file)">{{file.name}}</span>
+            </td>
+            <td>{{formatSize(file.size)}}</td>
+            <td *ngIf="!isToday(file.mtime); else UpdateTime">{{file.mtime | date:"yyyy/MM/dd"}}</td>
+            <ng-template #UpdateTime>
+                <td>{{file.mtime | date:"HH:ss"}}</td>
+            </ng-template>
+            <td *ngIf="!isToday(file.birthtime); else BirthTime">{{file.birthtime | date:"yyyy/MM/dd"}}</td>
+            <ng-template #BirthTime>
+                <td>{{file.mtime | date:"HH:ss"}}</td>
+            </ng-template>
+        </tr>
+    </tbody>
+</table>
