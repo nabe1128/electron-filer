@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FileService } from '../core/services';
 
 @Component({
   selector: '[filer-sidebar]',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SidebarComponent implements OnInit {
 
-  constructor() { }
+  constructor(private readonly _fileService: FileService) { }
 
   ngOnInit(): void {
+  }
+
+  onClickShortcut(target: string) {
+    if (target === 'home') {
+      this._fileService.getHomeFiles(false);
+    }
   }
 
 }
