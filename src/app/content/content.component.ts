@@ -20,11 +20,7 @@ export class ContentComponent implements OnInit {
   ngOnInit(): void {
     this._setFilesObserver();
 
-    // TODO 2回リクエストを投げないで済む方法模索
     this._fileService.getHomeFiles(false);
-    setTimeout(() => {
-      this._fileService.getHomeFiles(false);
-    }, 0);
   }
 
   private _setFilesObserver() {

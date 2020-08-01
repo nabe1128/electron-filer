@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 
 import { ElectronService } from './electron/electron.service';
 import { Observable, Subject } from 'rxjs';
@@ -10,11 +10,12 @@ import { File } from '../../models/file';
 })
 export class FileService {
 
-  private _filesSubject: Subject<File[]>;
+  private _filesSubject = new Subject<File[]>();
 
-  constructor(private readonly _electronService: ElectronService) {
-    this._filesSubject = new Subject<File[]>();
-  }
+  constructor(
+    private readonly _zone: NgZone,
+    private readonly _electronService: ElectronService
+  ) { }
 
   get files$(): Observable<File[]> {
     return this._filesSubject.asObservable();
@@ -47,7 +48,9 @@ export class FileService {
         }
       });
 
-      this._filesSubject.next(files);
+      this._zone.run(() => {
+        this._filesSubject.next(files);
+      });
     });
   }
 
