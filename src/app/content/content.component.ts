@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FileService } from '../core/services';
 import { File } from '../models/file';
+import { fromEvent, merge, Subscription } from 'rxjs';
+import { bufferTime, map, filter } from 'rxjs/operators';
 
 @Component({
   selector: '[filer-content]',
@@ -12,6 +14,8 @@ export class ContentComponent implements OnInit {
   currentDirFiles: File[] = [];
 
   private _today = new Date();
+
+  subscription?: Subscription = null;
 
   constructor(
     private readonly _fileService: FileService
@@ -59,5 +63,24 @@ export class ContentComponent implements OnInit {
     return this._today.getFullYear() === date.getFullYear()
       && this._today.getMonth() === date.getMonth()
       && this._today.getDate() === date.getDate();
+  }
+
+  onMouseDownFile(me: MouseEvent, file: File) {
+    if (!this.subscription) {
+      me.preventDefault();
+      const elm = document.getElementById(`file-${file.name}`);
+      const mouseDownEvent$ = fromEvent(elm, 'mousedown');
+      const mouseUpEvent$ = fromEvent(elm, 'mouseup');
+      this.subscription = merge(mouseDownEvent$, mouseUpEvent$).pipe(
+        bufferTime(300),
+        map((event) => event.length),
+        filter((eventLength) => eventLength === 3)
+      ).subscribe(() => {
+        this._fileService.getFiles(file.path, false);
+
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      });
+    }
   }
 }
