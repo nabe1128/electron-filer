@@ -24,7 +24,7 @@ export class ContentComponent implements OnInit {
   ngOnInit(): void {
     this._setFilesObserver();
 
-    this._fileService.getHomeFiles(false);
+    this._fileService.getHomeFiles();
   }
 
   private _setFilesObserver() {
@@ -76,7 +76,7 @@ export class ContentComponent implements OnInit {
         map((event) => event.length),
         filter((eventLength) => eventLength === 3)
       ).subscribe(() => {
-        this._fileService.getFiles(file.path, false);
+        this._fileService.getFiles(file.path, true);
 
         this.subscription.unsubscribe();
         this.subscription = null;
