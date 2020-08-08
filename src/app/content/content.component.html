@@ -8,7 +8,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let file of currentDirFiles">
+        <tr *ngFor="let file of currentDirFiles" id="file-{{file.name}}" (mousedown)="onMouseDownFile($event, file)">
             <td>
                 <span class="icon" [class]="iconClass(file)">{{file.name}}</span>
             </td>

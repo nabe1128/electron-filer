@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FileService } from '../core/services';
 import { File } from '../models/file';
+import { fromEvent, merge, Subscription } from 'rxjs';
+import { bufferTime, map, filter } from 'rxjs/operators';
 
 @Component({
   selector: '[filer-content]',
@@ -13,6 +15,8 @@ export class ContentComponent implements OnInit {
 
   private _today = new Date();
 
+  subscription?: Subscription = null;
+
   constructor(
     private readonly _fileService: FileService
   ) { }
@@ -20,11 +24,7 @@ export class ContentComponent implements OnInit {
   ngOnInit(): void {
     this._setFilesObserver();
 
-    // TODO 2回リクエストを投げないで済む方法模索
-    this._fileService.getHomeFiles(false);
-    setTimeout(() => {
-      this._fileService.getHomeFiles(false);
-    }, 0);
+    this._fileService.getHomeFiles();
   }
 
   private _setFilesObserver() {
@@ -63,5 +63,24 @@ export class ContentComponent implements OnInit {
     return this._today.getFullYear() === date.getFullYear()
       && this._today.getMonth() === date.getMonth()
       && this._today.getDate() === date.getDate();
+  }
+
+  onMouseDownFile(me: MouseEvent, file: File) {
+    if (!this.subscription) {
+      me.preventDefault();
+      const elm = document.getElementById(`file-${file.name}`);
+      const mouseDownEvent$ = fromEvent(elm, 'mousedown');
+      const mouseUpEvent$ = fromEvent(elm, 'mouseup');
+      this.subscription = merge(mouseDownEvent$, mouseUpEvent$).pipe(
+        bufferTime(300),
+        map((event) => event.length),
+        filter((eventLength) => eventLength === 3)
+      ).subscribe(() => {
+        this._fileService.getFiles(file.path, true);
+
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      });
+    }
   }
 }

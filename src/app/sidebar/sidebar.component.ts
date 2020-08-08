@@ -15,7 +15,7 @@ export class SidebarComponent implements OnInit {
 
   onClickShortcut(target: string) {
     if (target === 'home') {
-      this._fileService.getHomeFiles(false);
+      this._fileService.getHomeFiles();
     }
   }
 
