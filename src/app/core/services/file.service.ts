@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-
-import { ElectronService } from './electron/electron.service';
+import { Injectable, NgZone } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
+import { ElectronService } from './electron/electron.service';
+import { HistoryService } from './history.service';
 import { File } from '../../models/file';
 
 @Injectable({
@@ -10,17 +10,21 @@ import { File } from '../../models/file';
 })
 export class FileService {
 
-  private _filesSubject: Subject<File[]>;
+  private _filesSubject = new Subject<File[]>();
 
-  constructor(private readonly _electronService: ElectronService) {
-    this._filesSubject = new Subject<File[]>();
-  }
+  includeDotFile = false;
+
+  constructor(
+    private readonly _zone: NgZone,
+    private readonly _electronService: ElectronService,
+    private readonly _historyService: HistoryService,
+  ) { }
 
   get files$(): Observable<File[]> {
     return this._filesSubject.asObservable();
   }
 
-  getFiles(dirPath: string, includeDotFile: boolean) {
+  getFiles(dirPath: string, addHistory: boolean) {
     this._electronService.fs.readdir(dirPath, (err, fileNames) => {
       if (err) {
         console.error(err);
@@ -29,7 +33,7 @@ export class FileService {
 
       const files: File[] = [];
       fileNames.forEach((file) => {
-        if (includeDotFile || !file.startsWith('.')) {
+        if (this.includeDotFile || !file.startsWith('.')) {
           const filePath = this._electronService.path.join(dirPath, file);
           const stats = this._electronService.fs.statSync(filePath);
           files.push({
@@ -47,12 +51,18 @@ export class FileService {
         }
       });
 
-      this._filesSubject.next(files);
+      if (addHistory) {
+        this._historyService.push(dirPath);
+      }
+
+      this._zone.run(() => {
+        this._filesSubject.next(files);
+      });
     });
   }
 
-  getHomeFiles(includeDotFile: boolean) {
+  getHomeFiles() {
     const homeDir = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"];
-    this.getFiles(homeDir, includeDotFile);
+    this.getFiles(homeDir, true);
   }
 }
